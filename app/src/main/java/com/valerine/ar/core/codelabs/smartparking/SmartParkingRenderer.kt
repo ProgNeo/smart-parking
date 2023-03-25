@@ -18,7 +18,6 @@ import com.valerine.ar.core.examples.java.common.samplerender.Texture
 import com.valerine.ar.core.examples.java.common.samplerender.arcore.BackgroundRenderer
 import java.io.IOException
 
-
 class SmartParkingRenderer(val activity: SmartParkingActivity) :
     SampleRender.Renderer, DefaultLifecycleObserver {
 
@@ -70,19 +69,20 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
                     render,
                     "models/spatial_marker_baked.png",
                     Texture.WrapMode.CLAMP_TO_EDGE,
-                    Texture.ColorFormat.SRGB
+                    Texture.ColorFormat.SRGB,
                 )
 
-            virtualObjectMesh = Mesh.createFromAsset(render, "models/geospatial_marker.obj");
+            virtualObjectMesh = Mesh.createFromAsset(render, "models/geospatial_marker.obj")
             virtualObjectShader =
                 Shader.createFromAssets(
                     render,
                     "shaders/ar_unlit_object.vert",
                     "shaders/ar_unlit_object.frag",
-                    /*defines=*/ null
+                    /*defines=*/ null,
                 )
                     .setTexture(
-                        "u_Texture", virtualObjectTexture
+                        "u_Texture",
+                        virtualObjectTexture,
                     )
 
             backgroundRenderer.setUseDepthVisualization(render, false)
@@ -159,7 +159,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             activity.view.mapView?.updateMapPosition(
                 latitude = cameraGeospatialPose.latitude,
                 longitude = cameraGeospatialPose.longitude,
-                heading = cameraGeospatialPose.heading
+                heading = cameraGeospatialPose.heading,
             )
             activity.view.updateStatusText(earth, cameraGeospatialPose)
         }

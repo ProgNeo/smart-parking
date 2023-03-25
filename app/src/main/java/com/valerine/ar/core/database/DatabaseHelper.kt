@@ -66,25 +66,124 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     fun insertParking(parking: Parking) {
         val db = this.writableDatabase
 
-        val contentValues = ContentValues()
-        contentValues.put(PARKING_COLUMN_NAME, parking.id)
-        contentValues.put(PARKING_COLUMN_LATITUDE, parking.latitude)
-        contentValues.put(PARKING_COLUMN_LONGITUDE, parking.longitude)
+        val values = ContentValues().apply {
+            put(PARKING_COLUMN_NAME, parking.id)
+            put(PARKING_COLUMN_LATITUDE, parking.latitude)
+            put(PARKING_COLUMN_LONGITUDE, parking.longitude)
+        }
 
-        db.insert(TABLE_NAME_PARKING, null, contentValues)
+        db.insert(TABLE_NAME_PARKING, null, values)
     }
 
     fun insertParkingPlace(parkingPlace: ParkingPlace) {
-        val db = this.writableDatabase
+        val db = this.readableDatabase
 
-        val contentValues = ContentValues()
-        contentValues.put(PARKING_PLACE_COLUMN_ID, parkingPlace.id)
-        contentValues.put(PARKING_PLACE_COLUMN_LATITUDE, parkingPlace.latitude)
-        contentValues.put(PARKING_PLACE_COLUMN_LONGITUDE, parkingPlace.longitude)
-        contentValues.put(PARKING_PLACE_COLUMN_EMPLOYED, parkingPlace.employed)
-        contentValues.put(PARKING_PLACE_COLUMN_BOOKED, parkingPlace.booked)
-        contentValues.put(PARKING_PLACE_PARKING_ID, parkingPlace.parkingId)
+        val values = ContentValues().apply {
+            put(PARKING_PLACE_COLUMN_ID, parkingPlace.id)
+            put(PARKING_PLACE_COLUMN_LATITUDE, parkingPlace.latitude)
+            put(PARKING_PLACE_COLUMN_LONGITUDE, parkingPlace.longitude)
+            put(PARKING_PLACE_COLUMN_EMPLOYED, parkingPlace.employed)
+            put(PARKING_PLACE_COLUMN_BOOKED, parkingPlace.booked)
+            put(PARKING_PLACE_PARKING_ID, parkingPlace.parkingId)
+        }
 
-        db.insert(TABLE_NAME_PARKING_PLACE, null, contentValues)
+        db.insert(TABLE_NAME_PARKING_PLACE, null, values)
+        db.close()
+    }
+
+    fun getParkingList(): List<Parking> {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME_PARKING"
+        val cursor = db.rawQuery(query, null)
+
+        val parkingList = mutableListOf<Parking>()
+        with(cursor) {
+            while (moveToNext()) {
+                val parking = Parking(
+                    id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
+                    name = getString(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
+                    latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
+                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
+                )
+                parkingList.add(parking)
+            }
+        }
+        cursor.close()
+        db.close()
+
+        return parkingList
+    }
+
+    fun getParking(id: Int): Parking? {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME_PARKING WHERE $PARKING_COLUMN_ID = $id"
+        val cursor = db.rawQuery(query, null)
+
+        var parking: Parking? = null
+        with(cursor) {
+            while (moveToNext()) {
+                parking = Parking(
+                    id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
+                    name = getString(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
+                    latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
+                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
+                )
+                break
+            }
+        }
+        cursor.close()
+        db.close()
+
+        return parking
+    }
+
+    fun getParkingPlacesList(): List<ParkingPlace> {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME_PARKING_PLACE"
+        val cursor = db.rawQuery(query, null)
+
+        val parkingPlacesList = mutableListOf<ParkingPlace>()
+        with(cursor) {
+            while (moveToNext()) {
+                val parkingPlace = ParkingPlace(
+                    id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
+                    latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
+                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
+                    employed = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    booked = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
+                )
+                parkingPlacesList.add(parkingPlace)
+            }
+        }
+        cursor.close()
+        db.close()
+
+        return parkingPlacesList
+    }
+
+    fun getParkingPlace(id: Int): ParkingPlace? {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $TABLE_NAME_PARKING_PLACE WHERE $PARKING_PLACE_COLUMN_ID = $id"
+        val cursor = db.rawQuery(query, null)
+
+        var parkingPlace: ParkingPlace? = null
+        with(cursor) {
+            while (moveToNext()) {
+                parkingPlace = ParkingPlace(
+                    id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
+                    latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
+                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
+                    employed = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    booked = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
+                )
+                break
+            }
+        }
+        cursor.close()
+        db.close()
+
+        return parkingPlace
     }
 }

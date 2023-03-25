@@ -1,9 +1,7 @@
 package com.valerine.ar.core.codelabs.smartparking
 
-import android.content.SharedPreferences
 import android.opengl.Matrix
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.maps.model.LatLng
@@ -197,7 +195,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             activity.runOnUiThread(
                 Runnable {
                     kotlin.run {
-                        activity.view.mapView?.earthMarker?.apply {
+                        activity.view.mapView?.carMarker?.apply {
                             position = latLng
                             isVisible = true
                         }
@@ -220,7 +218,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         val longitude = cameraGeospatialPose.longitude
 
         with(activity.view.sharedPreferences.edit()) {
-            putFloat("altitude", longitude.toFloat())
+            putFloat("altitude", altitude.toFloat())
             putFloat("latitude", latitude.toFloat())
             putFloat("longitude", longitude.toFloat())
             apply()
@@ -235,7 +233,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
         earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
 
-        activity.view.mapView?.earthMarker?.apply {
+        activity.view.mapView?.carMarker?.apply {
             position = latLng
             isVisible = true
         }

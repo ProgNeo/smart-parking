@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.ar.core.Anchor
 import com.google.ar.core.TrackingState
 import com.google.ar.core.exceptions.CameraNotAvailableException
+import com.valerine.ar.core.database.models.ParkingPlace
 import com.valerine.ar.core.examples.java.common.helpers.DisplayRotationHelper
 import com.valerine.ar.core.examples.java.common.helpers.TrackingStateHelper
 import com.valerine.ar.core.examples.java.common.samplerender.Framebuffer
@@ -89,6 +90,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             backgroundRenderer.setUseDepthVisualization(render, false)
             backgroundRenderer.setUseOcclusion(render, false)
             loadMark()
+            loadParkingMarks()
         } catch (e: IOException) {
             Log.e(TAG, "Failed to read a required asset file", e)
             showError("Failed to read a required asset file: $e")
@@ -176,6 +178,25 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
     private var earthAnchor: Anchor? = null
 
+    private fun loadParkingMarks() {
+        val placesList = activity.databaseHelper.getParkingPlacesList()
+
+        activity.runOnUiThread {
+            kotlin.run {
+                for (place in placesList) {
+                    val marker = activity.view.mapView?.createParkingMarker(place)
+
+                    marker?.let {
+                        if (place.isBooked) {
+                            activity.view.mapView?.bookedParkingPlace = marker
+                        }
+                        activity.view.mapView?.parkingPlaceMarkers?.add(it)
+                    }
+                }
+            }
+        }
+    }
+
     private fun loadMark() {
         val altitude = activity.view.sharedPreferences.getFloat("altitude", 0f).toDouble()
         val latitude = activity.view.sharedPreferences.getFloat("latitude", 0f).toDouble()
@@ -193,16 +214,14 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
             earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
 
-            activity.runOnUiThread(
-                Runnable {
-                    kotlin.run {
-                        activity.view.mapView?.carMarker?.apply {
-                            position = latLng
-                            isVisible = true
-                        }
+            activity.runOnUiThread {
+                kotlin.run {
+                    activity.view.mapView?.carMarker?.apply {
+                        position = latLng
+                        isVisible = true
                     }
                 }
-            )
+            }
         }
     }
 

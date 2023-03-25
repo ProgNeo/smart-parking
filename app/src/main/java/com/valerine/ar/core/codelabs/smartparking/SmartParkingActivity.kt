@@ -1,6 +1,8 @@
 package com.valerine.ar.core.codelabs.smartparking
 
+import android.content.Context
 import android.os.Bundle
+import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +16,8 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 import com.valerine.ar.core.codelabs.smartparking.helpers.ARCoreSessionLifecycleHelper
 import com.valerine.ar.core.codelabs.smartparking.helpers.GeoPermissionsHelper
 import com.valerine.ar.core.codelabs.smartparking.helpers.SmartParkingView
+import com.valerine.ar.core.database.DatabaseHelper
+import com.valerine.ar.core.database.models.ParkingPlace
 import com.valerine.ar.core.examples.java.common.samplerender.SampleRender
 
 class SmartParkingActivity : AppCompatActivity() {
@@ -24,9 +28,18 @@ class SmartParkingActivity : AppCompatActivity() {
     lateinit var arCoreSessionHelper: ARCoreSessionLifecycleHelper
     lateinit var view: SmartParkingView
     lateinit var renderer: SmartParkingRenderer
+    lateinit var databaseHelper: DatabaseHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        databaseHelper = DatabaseHelper(applicationContext)
+
+        if (databaseHelper.getParkingPlacesList().isEmpty()) {
+            ParkingPlace.mock().forEach {
+                databaseHelper.insertParkingPlace(it)
+            }
+        }
 
         arCoreSessionHelper = ARCoreSessionLifecycleHelper(this)
 

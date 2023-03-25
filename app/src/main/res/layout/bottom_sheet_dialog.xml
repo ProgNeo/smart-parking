@@ -7,22 +7,30 @@
 	android:layout_height="wrap_content"
 	android:background="#ffffff"
 	tools:context=".SmartParkingActivity"
-	app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-	app:behavior_hideable="false"
+	app:layout_behavior="com.valerine.ar.core.codelabs.smartparking.helpers.LockableBottomSheetBehavior"
+	app:behavior_hideable="true"
 	app:behavior_peekHeight="0dp">
 
-	<com.valerine.ar.core.codelabs.smartparking.helpers.MapTouchWrapper
-		android:id="@+id/map_wrapper"
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
 		android:layout_width="match_parent"
-		android:layout_height="350dp"
-		android:layout_alignParentBottom="true"
+		android:layout_height="wrap_content"
 		app:layout_constraintTop_toTopOf="parent">
 
-		<fragment
+		<androidx.fragment.app.FragmentContainerView
 			android:id="@+id/map"
 			android:name="com.google.android.gms.maps.SupportMapFragment"
 			android:layout_width="match_parent"
-			android:layout_height="match_parent"
+			android:layout_height="350dp"
 			tools:context=".SmartParkingActivity" />
-	</com.valerine.ar.core.codelabs.smartparking.helpers.MapTouchWrapper>
+
+		<com.google.android.material.floatingactionbutton.FloatingActionButton
+			android:id="@+id/fab_track_user"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="top|end"
+			android:layout_margin="16dp"
+			android:contentDescription="@string/track_user"
+			app:srcCompat="@drawable/ic_my_location" />
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

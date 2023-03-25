@@ -3,14 +3,12 @@ package com.valerine.ar.core.codelabs.smartparking.helpers
 import android.content.Context
 import android.opengl.GLSurfaceView
 import android.view.View
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.ar.core.Earth
-import com.google.ar.core.GeospatialPose
 import com.valerine.ar.core.codelabs.smartparking.SmartParkingActivity
 import com.valerine.ar.core.codelabs.smartparking.R
 import com.valerine.ar.core.examples.java.common.helpers.SnackbarHelper
@@ -44,7 +42,34 @@ class SmartParkingView(val activity: SmartParkingActivity) : DefaultLifecycleObs
     val mapFab = root.findViewById<FloatingActionButton>(R.id.fab_open_map).apply {
         this.setOnClickListener {
             val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED;
+            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            } else {
+                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+        }
+    }
+
+    val trackUserFab = root.findViewById<FloatingActionButton>(R.id.fab_track_user).apply {
+        this.setOnClickListener {
+            mapView?.let {
+                it.isTrackUser = !it.isTrackUser
+                if (it.isTrackUser) {
+                    this.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            activity.applicationContext,
+                            R.drawable.ic_my_location
+                        )
+                    )
+                } else {
+                    this.setImageDrawable(
+                        ContextCompat.getDrawable(
+                            activity.applicationContext,
+                            R.drawable.ic_location_disabled
+                        )
+                    )
+                }
+            }
         }
     }
 

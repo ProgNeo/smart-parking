@@ -1,9 +1,7 @@
 package com.valerine.ar.core.codelabs.smartparking
 
-import android.content.SharedPreferences
 import android.opengl.Matrix
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.maps.model.LatLng
@@ -19,7 +17,6 @@ import com.valerine.ar.core.examples.java.common.samplerender.Shader
 import com.valerine.ar.core.examples.java.common.samplerender.Texture
 import com.valerine.ar.core.examples.java.common.samplerender.arcore.BackgroundRenderer
 import java.io.IOException
-
 
 class SmartParkingRenderer(val activity: SmartParkingActivity) :
     SampleRender.Renderer, DefaultLifecycleObserver {
@@ -72,19 +69,21 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
                     render,
                     "models/pointer.png",
                     Texture.WrapMode.CLAMP_TO_EDGE,
-                    Texture.ColorFormat.SRGB
+                    Texture.ColorFormat.SRGB,
                 )
 
-            virtualObjectMesh = Mesh.createFromAsset(render, "models/pointer.obj");
+            virtualObjectMesh = Mesh.createFromAsset(render, "models/pointer.obj")
+
             virtualObjectShader =
                 Shader.createFromAssets(
                     render,
                     "shaders/ar_unlit_object.vert",
                     "shaders/ar_unlit_object.frag",
-                    /*defines=*/ null
+                    /*defines=*/ null,
                 )
                     .setTexture(
-                        "u_Texture", virtualObjectTexture
+                        "u_Texture",
+                        virtualObjectTexture,
                     )
 
             backgroundRenderer.setUseDepthVisualization(render, false)
@@ -162,7 +161,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             activity.view.mapView?.updateMapPosition(
                 latitude = cameraGeospatialPose.latitude,
                 longitude = cameraGeospatialPose.longitude,
-                heading = cameraGeospatialPose.heading
+                heading = cameraGeospatialPose.heading,
             )
         }
 
@@ -197,7 +196,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             activity.runOnUiThread(
                 Runnable {
                     kotlin.run {
-                        activity.view.mapView?.earthMarker?.apply {
+                        activity.view.mapView?.carMarker?.apply {
                             position = latLng
                             isVisible = true
                         }
@@ -220,7 +219,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         val longitude = cameraGeospatialPose.longitude
 
         with(activity.view.sharedPreferences.edit()) {
-            putFloat("altitude", longitude.toFloat())
+            putFloat("altitude", altitude.toFloat())
             putFloat("latitude", latitude.toFloat())
             putFloat("longitude", longitude.toFloat())
             apply()
@@ -235,7 +234,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
         earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
 
-        activity.view.mapView?.earthMarker?.apply {
+        activity.view.mapView?.carMarker?.apply {
             position = latLng
             isVisible = true
         }

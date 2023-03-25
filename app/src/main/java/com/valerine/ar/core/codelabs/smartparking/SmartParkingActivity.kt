@@ -6,15 +6,15 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.ar.core.Config
 import com.google.ar.core.Session
-import com.valerine.ar.core.codelabs.smartparking.helpers.ARCoreSessionLifecycleHelper
-import com.valerine.ar.core.codelabs.smartparking.helpers.GeoPermissionsHelper
-import com.valerine.ar.core.codelabs.smartparking.helpers.SmartParkingView
-import com.valerine.ar.core.examples.java.common.samplerender.SampleRender
 import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableApkTooOldException
 import com.google.ar.core.exceptions.UnavailableDeviceNotCompatibleException
 import com.google.ar.core.exceptions.UnavailableSdkTooOldException
 import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationException
+import com.valerine.ar.core.codelabs.smartparking.helpers.ARCoreSessionLifecycleHelper
+import com.valerine.ar.core.codelabs.smartparking.helpers.GeoPermissionsHelper
+import com.valerine.ar.core.codelabs.smartparking.helpers.SmartParkingView
+import com.valerine.ar.core.examples.java.common.samplerender.SampleRender
 
 class SmartParkingActivity : AppCompatActivity() {
     companion object {
@@ -59,14 +59,18 @@ class SmartParkingActivity : AppCompatActivity() {
     }
 
     private fun configureSession(session: Session) {
-        session.configure(session.config.apply {
-            focusMode = Config.FocusMode.AUTO
-            geospatialMode = Config.GeospatialMode.ENABLED
-        })
+        session.configure(
+            session.config.apply {
+                focusMode = Config.FocusMode.AUTO
+                geospatialMode = Config.GeospatialMode.ENABLED
+            },
+        )
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int, permissions: Array<String>, results: IntArray
+        requestCode: Int,
+        permissions: Array<String>,
+        results: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, results)
         if (!GeoPermissionsHelper.hasGeoPermissions(this)) {
@@ -75,6 +79,7 @@ class SmartParkingActivity : AppCompatActivity() {
                 "Camera and location permissions are needed to run this application",
                 Toast.LENGTH_LONG
             ).show()
+
             if (!GeoPermissionsHelper.shouldShowRequestPermissionRationale(this)) {
                 GeoPermissionsHelper.launchPermissionSettings(this)
             }

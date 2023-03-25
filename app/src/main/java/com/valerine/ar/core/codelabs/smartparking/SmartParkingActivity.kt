@@ -65,6 +65,7 @@ class SmartParkingActivity : AppCompatActivity() {
     private fun configureSession(session: Session) {
         session.configure(
             session.config.apply {
+                focusMode = Config.FocusMode.AUTO
                 geospatialMode = Config.GeospatialMode.ENABLED
             }
         )

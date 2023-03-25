@@ -66,6 +66,7 @@ class HelloGeoActivity : AppCompatActivity() {
 
     // Configure session features.
     arCoreSessionHelper.beforeSessionResume = ::configureSession
+
     lifecycle.addObserver(arCoreSessionHelper)
 
     // Set up the Hello AR renderer.
@@ -83,7 +84,11 @@ class HelloGeoActivity : AppCompatActivity() {
 
   // Configure the session, setting the desired options according to your usecase.
   fun configureSession(session: Session) {
-    // TODO: Configure ARCore to use GeospatialMode.ENABLED.
+    session.configure(
+      session.config.apply {
+        geospatialMode = Config.GeospatialMode.ENABLED
+      }
+    )
   }
 
   override fun onRequestPermissionsResult(

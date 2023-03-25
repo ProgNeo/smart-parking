@@ -19,7 +19,7 @@ import com.google.ar.core.exceptions.UnavailableUserDeclinedInstallationExceptio
 
 class SmartParkingActivity : AppCompatActivity() {
     companion object {
-        private const val TAG = "HelloGeoActivity"
+        private const val TAG = "SmartParkingActivity"
     }
 
     lateinit var arCoreSessionHelper: ARCoreSessionLifecycleHelper
@@ -89,10 +89,5 @@ class SmartParkingActivity : AppCompatActivity() {
             }
             finish()
         }
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        FullScreenHelper.setFullScreenOnWindowFocusChanged(this, hasFocus)
     }
 }

@@ -97,7 +97,6 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         displayRotationHelper.onSurfaceChanged(width, height)
         virtualSceneFramebuffer.resize(width, height)
     }
-    //</editor-fold>
 
     override fun onDrawFrame(render: SampleRender) {
         val session = session ?: return
@@ -153,7 +152,6 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         camera.getViewMatrix(viewMatrix, 0)
 
         render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f)
-        //</editor-fold>
 
         val earth = session.earth
         if (earth?.trackingState == TrackingState.TRACKING) {
@@ -175,7 +173,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         backgroundRenderer.drawVirtualScene(render, virtualSceneFramebuffer, Z_NEAR, Z_FAR)
     }
 
-    var earthAnchor: Anchor? = null
+    private var earthAnchor: Anchor? = null
 
     fun placeMark() {
         val earth = session?.earth ?: return

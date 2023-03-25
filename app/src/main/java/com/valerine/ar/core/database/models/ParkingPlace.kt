@@ -4,7 +4,7 @@ data class ParkingPlace(
     val id: Int,
     val latitude: Double,
     val longitude: Double,
-    val employed: Boolean = false,
-    val booked: Boolean = false,
+    val isEmployed: Boolean = false,
+    val isBooked: Boolean = false,
     val parkingId: Int
 )

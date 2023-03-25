@@ -23,8 +23,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val PARKING_PLACE_COLUMN_ID = "id"
         private const val PARKING_PLACE_COLUMN_LATITUDE = "latitude"
         private const val PARKING_PLACE_COLUMN_LONGITUDE = "longitude"
-        private const val PARKING_PLACE_COLUMN_EMPLOYED = "employed"
-        private const val PARKING_PLACE_COLUMN_BOOKED = "booked"
+        private const val PARKING_PLACE_COLUMN_IS_EMPLOYED = "is_employed"
+        private const val PARKING_PLACE_COLUMN_IS_BOOKED = "is_booked"
         private const val PARKING_PLACE_PARKING_ID = "parking_id"
     }
 
@@ -45,8 +45,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 $PARKING_PLACE_COLUMN_ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 $PARKING_PLACE_COLUMN_LATITUDE REAL NOT NULL,
                 $PARKING_PLACE_COLUMN_LONGITUDE REAL NOT NULL,
-                $PARKING_PLACE_COLUMN_EMPLOYED INTEGER DEFAULT "FALSE" NOT NULL,
-                $PARKING_PLACE_COLUMN_BOOKED INTEGER DEFAULT "FALSE" NOT NULL,
+                $PARKING_PLACE_COLUMN_IS_EMPLOYED INTEGER DEFAULT "0" NOT NULL,
+                $PARKING_PLACE_COLUMN_IS_BOOKED INTEGER DEFAULT "0" NOT NULL,
                 $PARKING_PLACE_PARKING_ID INTEGER NOT NULL,
                 FOREIGN KEY ($PARKING_PLACE_PARKING_ID)
                     REFERENCES $TABLE_NAME_PARKING ($PARKING_PLACE_COLUMN_ID)
@@ -97,8 +97,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(PARKING_PLACE_COLUMN_ID, parkingPlace.id)
             put(PARKING_PLACE_COLUMN_LATITUDE, parkingPlace.latitude)
             put(PARKING_PLACE_COLUMN_LONGITUDE, parkingPlace.longitude)
-            put(PARKING_PLACE_COLUMN_EMPLOYED, parkingPlace.employed)
-            put(PARKING_PLACE_COLUMN_BOOKED, parkingPlace.booked)
+            put(PARKING_PLACE_COLUMN_IS_EMPLOYED, parkingPlace.isEmployed)
+            put(PARKING_PLACE_COLUMN_IS_BOOKED, parkingPlace.isBooked)
             put(PARKING_PLACE_PARKING_ID, parkingPlace.parkingId)
         }
 
@@ -113,8 +113,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(PARKING_PLACE_COLUMN_ID, parkingPlace.id)
             put(PARKING_PLACE_COLUMN_LATITUDE, parkingPlace.latitude)
             put(PARKING_PLACE_COLUMN_LONGITUDE, parkingPlace.longitude)
-            put(PARKING_PLACE_COLUMN_EMPLOYED, parkingPlace.employed)
-            put(PARKING_PLACE_COLUMN_BOOKED, parkingPlace.booked)
+            put(PARKING_PLACE_COLUMN_IS_EMPLOYED, parkingPlace.isEmployed)
+            put(PARKING_PLACE_COLUMN_IS_BOOKED, parkingPlace.isBooked)
             put(PARKING_PLACE_PARKING_ID, parkingPlace.parkingId)
         }
 
@@ -181,8 +181,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
                     latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
                     longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
-                    employed = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
-                    booked = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    isEmployed = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    isBooked = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
                     parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
                 )
                 parkingPlacesList.add(parkingPlace)
@@ -206,8 +206,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
                     latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
                     longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
-                    employed = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
-                    booked = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    isEmployed = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
+                    isBooked = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)) > 0,
                     parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
                 )
                 break

@@ -68,12 +68,12 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             virtualObjectTexture =
                 Texture.createFromAsset(
                     render,
-                    "models/spatial_marker_baked.png",
+                    "models/pointer.png",
                     Texture.WrapMode.CLAMP_TO_EDGE,
                     Texture.ColorFormat.SRGB
                 )
 
-            virtualObjectMesh = Mesh.createFromAsset(render, "models/geospatial_marker.obj");
+            virtualObjectMesh = Mesh.createFromAsset(render, "models/pointer.obj");
             virtualObjectShader =
                 Shader.createFromAssets(
                     render,

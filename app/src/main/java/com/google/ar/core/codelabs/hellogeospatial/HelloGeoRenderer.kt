@@ -15,6 +15,7 @@
  */
 package com.google.ar.core.codelabs.hellogeospatial
 
+import android.graphics.Point
 import android.opengl.Matrix
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -197,22 +198,26 @@ class HelloGeoRenderer(val activity: HelloGeoActivity) :
 
   var earthAnchor: Anchor? = null
 
-  fun onMapClick(latLng: LatLng) {
+  fun placeMark() {
     val earth = session?.earth ?: return
     if (earth.trackingState != TrackingState.TRACKING) {
       return
     }
     earthAnchor?.detach()
 
-    // Place the earth anchor at the same altitude as that of the camera to make it easier to view.
     val cameraGeospatialPose = earth.cameraGeospatialPose
-    val altitude = cameraGeospatialPose.altitude - 1
-    // The rotation quaternion of the anchor in EUS coordinates.
+    val altitude = cameraGeospatialPose.altitude + 5
+    val latitude = cameraGeospatialPose.latitude
+    val longitude = cameraGeospatialPose.longitude
+
     val qx = 0f
     val qy = 0f
     val qz = 0f
     val qw = 1f
-    earthAnchor = earth.createAnchor(latLng.latitude, latLng.longitude, altitude, qx, qy, qz, qw)
+
+    val latLng = LatLng(latitude, longitude)
+
+    earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
 
     activity.view.mapView?.earthMarker?.apply {
       position = latLng
@@ -221,15 +226,11 @@ class HelloGeoRenderer(val activity: HelloGeoActivity) :
   }
 
   private fun SampleRender.renderCompassAtAnchor(anchor: Anchor) {
-    // Get the current pose of the Anchor in world space. The Anchor pose is updated
-    // during calls to session.update() as ARCore refines its estimate of the world.
     anchor.pose.toMatrix(modelMatrix, 0)
 
-    // Calculate model/view/projection matrices
     Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0)
     Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, modelViewMatrix, 0)
 
-    // Update shader properties and draw
     virtualObjectShader.setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
     draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer)
   }

@@ -44,10 +44,8 @@ class HelloGeoActivity : AppCompatActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    // Setup ARCore session lifecycle helper and configuration.
     arCoreSessionHelper = ARCoreSessionLifecycleHelper(this)
-    // If Session creation or Session.resume() fails, display a message and log detailed
-    // information.
+
     arCoreSessionHelper.exceptionCallback =
       { exception ->
         val message =
@@ -64,21 +62,17 @@ class HelloGeoActivity : AppCompatActivity() {
         view.snackbarHelper.showError(this, message)
       }
 
-    // Configure session features.
     arCoreSessionHelper.beforeSessionResume = ::configureSession
 
     lifecycle.addObserver(arCoreSessionHelper)
 
-    // Set up the Hello AR renderer.
     renderer = HelloGeoRenderer(this)
     lifecycle.addObserver(renderer)
 
-    // Set up Hello AR UI.
     view = HelloGeoView(this)
     lifecycle.addObserver(view)
     setContentView(view.root)
 
-    // Sets up an example renderer using our HelloGeoRenderer.
     SampleRender(view.surfaceView, renderer, assets)
   }
 

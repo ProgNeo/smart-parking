@@ -13,39 +13,54 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HelloGeoActivity">
 
-  <android.opengl.GLSurfaceView
-      android:id="@+id/surfaceview"
-      android:layout_width="fill_parent"
-      android:layout_height="fill_parent"
-      android:layout_gravity="top" />
-
-  <com.google.ar.core.codelabs.hellogeospatial.helpers.MapTouchWrapper
-      android:id="@+id/map_wrapper"
+  <RelativeLayout
       android:layout_width="match_parent"
-      android:layout_height="300dp"
-      android:layout_alignParentBottom="true">
+      android:layout_height="match_parent">
 
-    <fragment
-        android:id="@+id/map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+    <android.opengl.GLSurfaceView
+        android:id="@+id/surfaceview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="top" />
+
+    <com.google.ar.core.codelabs.hellogeospatial.helpers.MapTouchWrapper
+        android:id="@+id/map_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".HelloGeoActivity" />
-    <TextView
-        android:padding="8dp"
-        android:textColor="@android:color/black"
-        android:background="#AAFFFFFF"
-        android:layout_width="wrap_content"
-        android:fontFamily="monospace"
-        android:layout_height="wrap_content"
-        android:id="@+id/statusText"
-        />
-  </com.google.ar.core.codelabs.hellogeospatial.helpers.MapTouchWrapper>
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true">
 
-</RelativeLayout>
+      <fragment
+          android:id="@+id/map"
+          android:name="com.google.android.gms.maps.SupportMapFragment"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          tools:context=".HelloGeoActivity" />
+      <TextView
+          android:padding="8dp"
+          android:textColor="@android:color/black"
+          android:background="#AAFFFFFF"
+          android:layout_width="wrap_content"
+          android:fontFamily="monospace"
+          android:layout_height="wrap_content"
+          android:id="@+id/statusText"
+          />
+    </com.google.ar.core.codelabs.hellogeospatial.helpers.MapTouchWrapper>
+
+  </RelativeLayout>
+
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/floating_action_button"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="16dp"
+      android:contentDescription="@string/place_mark"
+      app:srcCompat="@drawable/ic_plus"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

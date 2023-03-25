@@ -25,7 +25,7 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
     private var cameraIdle = true
 
     private val userMarker = createUserMarker(USER_MARKER_COLOR)
-    var bookedParkingPlace: Marker? = null
+    private var bookedParkingPlace: Marker? = null
     val carMarker = createCarMarker(CAR_MARKER_COLOR)
 
     val parkingPlaceMarkers = arrayListOf<Marker>()
@@ -56,9 +56,12 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
                     activity.databaseHelper.updateParkingPlace(parkingPlacesList.first {
                         it.id == parkingPlace.tag
                     }.apply { this.isBooked = false })
+
+                    if (bookedParkingPlace?.tag == marker.tag) return@setOnMarkerClickListener false
                 }
 
                 bookedParkingPlace = marker
+
                 marker.setIcon(
                     BitmapDescriptorFactory.fromBitmap(
                         createColoredMarkerBitmap(
@@ -66,9 +69,12 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
                         )
                     )
                 )
-                activity.databaseHelper.updateParkingPlace(parkingPlacesList.first {
+                val place = parkingPlacesList.first {
                     it.id == marker.tag
-                }.apply { this.isBooked = true })
+                }.apply { this.isBooked = true }
+
+                activity.databaseHelper.updateParkingPlace(place)
+                activity.renderer.placeParkingAnchor(place)
             }
 
             return@setOnMarkerClickListener false
@@ -132,22 +138,25 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
     }
 
     fun createParkingMarker(
-        parkingPlace: ParkingPlace
+        place: ParkingPlace
     ): Marker {
-        Log.i("map_view", parkingPlace.isBooked.toString())
         val markersOptions =
-            MarkerOptions().position(LatLng(parkingPlace.latitude, parkingPlace.longitude))
-                .draggable(false).anchor(0.5f, 0.5f).flat(false).visible(!parkingPlace.isEmployed)
+            MarkerOptions().position(LatLng(place.latitude, place.longitude))
+                .draggable(false).anchor(0.5f, 0.5f).flat(false).visible(!place.isEmployed)
                 .title(activity.getString(R.string.parking_place)).icon(
                     BitmapDescriptorFactory.fromBitmap(
                         createColoredMarkerBitmap(
-                            if (parkingPlace.isBooked) PARKING_BOOKED_COLOR else PARKING_FREE_COLOR,
+                            if (place.isBooked) PARKING_BOOKED_COLOR else PARKING_FREE_COLOR,
                             R.drawable.ic_parking_place
                         )
                     )
                 )
         val marker = googleMap.addMarker(markersOptions)!!
-        marker.tag = parkingPlace.id
+        if (place.isBooked) {
+            bookedParkingPlace = marker
+            activity.renderer.placeParkingAnchor(place)
+        }
+        marker.tag = place.id
         return marker
     }
 

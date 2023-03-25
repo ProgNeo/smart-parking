@@ -35,8 +35,10 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
     // Virtual object (ARCore mark)
     private lateinit var virtualObjectMesh: Mesh
-    private lateinit var virtualObjectShader: Shader
-    private lateinit var virtualObjectTexture: Texture
+    private lateinit var virtualObjectShaderRed: Shader
+    private lateinit var virtualObjectShaderBlue: Shader
+    private lateinit var virtualObjectTextureRed: Texture
+    private lateinit var virtualObjectTextureBlue: Texture
 
     // Temporary matrix allocated here to reduce number of allocations for each frame.
     private val modelMatrix = FloatArray(16)
@@ -65,7 +67,15 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             backgroundRenderer = BackgroundRenderer(render)
             virtualSceneFramebuffer = Framebuffer(render, /*width=*/ 1, /*height=*/ 1)
 
-            virtualObjectTexture =
+            virtualObjectTextureRed =
+                Texture.createFromAsset(
+                    render,
+                    "models/pointer.png",
+                    Texture.WrapMode.CLAMP_TO_EDGE,
+                    Texture.ColorFormat.SRGB,
+                )
+
+            virtualObjectTextureBlue =
                 Texture.createFromAsset(
                     render,
                     "models/pointer.png",
@@ -75,7 +85,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
             virtualObjectMesh = Mesh.createFromAsset(render, "models/pointer.obj")
 
-            virtualObjectShader =
+            virtualObjectShaderRed =
                 Shader.createFromAssets(
                     render,
                     "shaders/ar_unlit_object.vert",
@@ -84,7 +94,19 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
                 )
                     .setTexture(
                         "u_Texture",
-                        virtualObjectTexture,
+                        virtualObjectTextureRed,
+                    )
+
+            virtualObjectShaderBlue =
+                Shader.createFromAssets(
+                    render,
+                    "shaders/ar_unlit_object.vert",
+                    "shaders/ar_unlit_object.frag",
+                    /*defines=*/ null,
+                )
+                    .setTexture(
+                        "u_Texture",
+                        virtualObjectTextureBlue,
                     )
 
             backgroundRenderer.setUseDepthVisualization(render, false)
@@ -168,15 +190,19 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         }
 
         // Draw the placed anchor, if it exists.
-        earthAnchor?.let {
-            render.renderCompassAtAnchor(it)
+        carAnchor?.let {
+            render.renderCompassAtAnchorRed(it)
+        }
+        parkingAnchor?.let {
+            render.renderCompassAtAnchorRed(it)
         }
 
         // Compose the virtual scene with the background.
         backgroundRenderer.drawVirtualScene(render, virtualSceneFramebuffer, Z_NEAR, Z_FAR)
     }
 
-    private var earthAnchor: Anchor? = null
+    private var carAnchor: Anchor? = null
+    private var parkingAnchor: Anchor? = null
 
     private fun loadParkingMarks() {
         val placesList = activity.databaseHelper.getParkingPlacesList()
@@ -187,9 +213,6 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
                     val marker = activity.view.mapView?.createParkingMarker(place)
 
                     marker?.let {
-                        if (place.isBooked) {
-                            activity.view.mapView?.bookedParkingPlace = marker
-                        }
                         activity.view.mapView?.parkingPlaceMarkers?.add(it)
                     }
                 }
@@ -203,7 +226,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         val longitude = activity.view.sharedPreferences.getFloat("longitude", 0f).toDouble()
         if (longitude != 0.toDouble() && latitude != 0.toDouble() && altitude != 0.toDouble()) {
             val earth = session?.earth ?: return
-            earthAnchor?.detach()
+            carAnchor?.detach()
 
             val qx = 0f
             val qy = 0f
@@ -212,7 +235,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
             val latLng = LatLng(latitude, longitude)
 
-            earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
+            carAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
 
             activity.runOnUiThread {
                 kotlin.run {
@@ -230,7 +253,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         if (earth.trackingState != TrackingState.TRACKING) {
             return
         }
-        earthAnchor?.detach()
+        carAnchor?.detach()
 
         val cameraGeospatialPose = earth.cameraGeospatialPose
         val altitude = cameraGeospatialPose.altitude + 3
@@ -251,7 +274,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
         val latLng = LatLng(latitude, longitude)
 
-        earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
+        carAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
 
         activity.view.mapView?.carMarker?.apply {
             position = latLng
@@ -259,14 +282,39 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         }
     }
 
-    private fun SampleRender.renderCompassAtAnchor(anchor: Anchor) {
+    fun placeParkingAnchor(place: ParkingPlace) {
+        val earth = session?.earth ?: return
+        parkingAnchor?.detach()
+
+        val cameraGeospatialPose = earth.cameraGeospatialPose
+        val altitude = cameraGeospatialPose.altitude + 3
+
+        val qx = 0f
+        val qy = 0f
+        val qz = 0f
+        val qw = 1f
+
+        parkingAnchor = earth.createAnchor(place.latitude, place.longitude, altitude, qx, qy, qz, qw)
+    }
+
+    private fun SampleRender.renderCompassAtAnchorRed(anchor: Anchor) {
         anchor.pose.toMatrix(modelMatrix, 0)
 
         Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0)
         Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, modelViewMatrix, 0)
 
-        virtualObjectShader.setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
-        draw(virtualObjectMesh, virtualObjectShader, virtualSceneFramebuffer)
+        virtualObjectShaderRed.setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
+        draw(virtualObjectMesh, virtualObjectShaderRed, virtualSceneFramebuffer)
+    }
+
+    private fun SampleRender.renderCompassAtAnchorBlue(anchor: Anchor) {
+        anchor.pose.toMatrix(modelMatrix, 0)
+
+        Matrix.multiplyMM(modelViewMatrix, 0, viewMatrix, 0, modelMatrix, 0)
+        Matrix.multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0, modelViewMatrix, 0)
+
+        virtualObjectShaderBlue.setMat4("u_ModelViewProjection", modelViewProjectionMatrix)
+        draw(virtualObjectMesh, virtualObjectShaderBlue, virtualSceneFramebuffer)
     }
 
     private fun showError(errorMessage: String) =

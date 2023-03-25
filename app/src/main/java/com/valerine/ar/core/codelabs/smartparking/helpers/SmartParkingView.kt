@@ -1,6 +1,7 @@
 package com.valerine.ar.core.codelabs.smartparking.helpers
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.opengl.GLSurfaceView
 import android.view.View
 import androidx.core.content.ContextCompat
@@ -17,7 +18,7 @@ class SmartParkingView(val activity: SmartParkingActivity) : DefaultLifecycleObs
     val root: View = View.inflate(activity, R.layout.activity_main, null)
     val surfaceView: GLSurfaceView = root.findViewById(R.id.surfaceview)
 
-    val sharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
+    val sharedPreferences: SharedPreferences = activity.getPreferences(Context.MODE_PRIVATE)
 
     val session
         get() = activity.arCoreSessionHelper.session
@@ -33,45 +34,48 @@ class SmartParkingView(val activity: SmartParkingActivity) : DefaultLifecycleObs
             it.getMapAsync { googleMap -> mapView = MapView(activity, googleMap) }
         }
 
-    val markerFab = root.findViewById<FloatingActionButton>(R.id.fab_place_marker).apply {
-        this.setOnClickListener {
-            activity.renderer.placeMark()
-        }
-    }
-
-    val mapFab = root.findViewById<FloatingActionButton>(R.id.fab_open_map).apply {
-        this.setOnClickListener {
-            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-            if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-            } else {
-                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+    val markerFab: FloatingActionButton =
+        root.findViewById<FloatingActionButton>(R.id.fab_place_marker).apply {
+            this.setOnClickListener {
+                activity.renderer.placeMark()
             }
         }
-    }
 
-    val trackUserFab = root.findViewById<FloatingActionButton>(R.id.fab_track_user).apply {
-        this.setOnClickListener {
-            mapView?.let {
-                it.isTrackUser = !it.isTrackUser
-                if (it.isTrackUser) {
-                    this.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            activity.applicationContext,
-                            R.drawable.ic_my_location
-                        )
-                    )
+    val mapFab: FloatingActionButton =
+        root.findViewById<FloatingActionButton>(R.id.fab_open_map).apply {
+            this.setOnClickListener {
+                val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+                if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 } else {
-                    this.setImageDrawable(
-                        ContextCompat.getDrawable(
-                            activity.applicationContext,
-                            R.drawable.ic_location_disabled
-                        )
-                    )
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
                 }
             }
         }
-    }
+
+    val trackUserFab: FloatingActionButton =
+        root.findViewById<FloatingActionButton>(R.id.fab_track_user).apply {
+            this.setOnClickListener {
+                mapView?.let {
+                    it.isTrackUser = !it.isTrackUser
+                    if (it.isTrackUser) {
+                        this.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                activity.applicationContext,
+                                R.drawable.ic_my_location
+                            )
+                        )
+                    } else {
+                        this.setImageDrawable(
+                            ContextCompat.getDrawable(
+                                activity.applicationContext,
+                                R.drawable.ic_location_disabled
+                            )
+                        )
+                    }
+                }
+            }
+        }
 
     override fun onResume(owner: LifecycleOwner) {
         surfaceView.onResume()

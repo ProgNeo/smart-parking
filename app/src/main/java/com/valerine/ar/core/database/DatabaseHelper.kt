@@ -73,6 +73,21 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
 
         db.insert(TABLE_NAME_PARKING, null, values)
+        db.close()
+    }
+
+    fun updateParking(parking: Parking) {
+        val db = this.writableDatabase
+
+        val values = ContentValues().apply {
+            put(PARKING_COLUMN_NAME, parking.id)
+            put(PARKING_COLUMN_LATITUDE, parking.latitude)
+            put(PARKING_COLUMN_LONGITUDE, parking.longitude)
+        }
+
+        db.update(TABLE_NAME_PARKING, values,
+            "$PARKING_COLUMN_ID=${parking.id}", arrayOf("${parking.id}"))
+        db.close()
     }
 
     fun insertParkingPlace(parkingPlace: ParkingPlace) {
@@ -88,6 +103,23 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         }
 
         db.insert(TABLE_NAME_PARKING_PLACE, null, values)
+        db.close()
+    }
+
+    fun updateParkingPlace(parkingPlace: ParkingPlace) {
+        val db = this.writableDatabase
+
+        val values = ContentValues().apply {
+            put(PARKING_PLACE_COLUMN_ID, parkingPlace.id)
+            put(PARKING_PLACE_COLUMN_LATITUDE, parkingPlace.latitude)
+            put(PARKING_PLACE_COLUMN_LONGITUDE, parkingPlace.longitude)
+            put(PARKING_PLACE_COLUMN_EMPLOYED, parkingPlace.employed)
+            put(PARKING_PLACE_COLUMN_BOOKED, parkingPlace.booked)
+            put(PARKING_PLACE_PARKING_ID, parkingPlace.parkingId)
+        }
+
+        db.update(TABLE_NAME_PARKING_PLACE, values,
+            "$PARKING_PLACE_COLUMN_ID=${parkingPlace.id}", arrayOf("${parkingPlace.id}"))
         db.close()
     }
 

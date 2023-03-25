@@ -24,14 +24,5 @@
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			tools:context=".SmartParkingActivity" />
-
-		<TextView
-			android:padding="8dp"
-			android:textColor="@android:color/black"
-			android:background="#AAFFFFFF"
-			android:layout_width="wrap_content"
-			android:fontFamily="monospace"
-			android:layout_height="wrap_content"
-			android:id="@+id/statusText" />
 	</com.valerine.ar.core.codelabs.smartparking.helpers.MapTouchWrapper>
 </androidx.constraintlayout.widget.ConstraintLayout>

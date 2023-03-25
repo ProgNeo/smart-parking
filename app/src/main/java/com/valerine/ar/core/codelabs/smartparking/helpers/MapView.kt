@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.LightingColorFilter
 import android.graphics.Paint
 import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
@@ -19,10 +20,10 @@ import com.valerine.ar.core.codelabs.smartparking.R
 
 class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleMap) {
     private var setInitialCameraPosition = false
-    private val cameraMarker = createMarker(CAMERA_MARKER_COLOR)
+    private val userMarker = createUserMarker(USER_MARKER_COLOR)
     private var cameraIdle = true
 
-    val earthMarker = createMarker(EARTH_MARKER_COLOR)
+    val carMarker = createCarMarker(CAR_MARKER_COLOR)
 
     init {
         googleMap.uiSettings.apply {
@@ -45,9 +46,9 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
             if (!cameraIdle) {
                 return@runOnUiThread
             }
-            cameraMarker.isVisible = true
-            cameraMarker.position = position
-            cameraMarker.rotation = heading.toFloat()
+            userMarker.isVisible = true
+            userMarker.position = position
+            userMarker.rotation = heading.toFloat()
 
             val cameraPositionBuilder: CameraPosition.Builder = if (!setInitialCameraPosition) {
                 setInitialCameraPosition = true
@@ -63,7 +64,7 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
         }
     }
 
-    private fun createMarker(
+    private fun createUserMarker(
         color: Int,
     ): Marker {
         val markersOptions = MarkerOptions()
@@ -72,17 +73,30 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
             .anchor(0.5f, 0.5f)
             .flat(true)
             .visible(false)
-            .icon(BitmapDescriptorFactory.fromBitmap(createColoredMarkerBitmap(color)))
+            .icon(BitmapDescriptorFactory.fromBitmap(createColoredMarkerBitmap(color, R.drawable.ic_navigation_white)))
         return googleMap.addMarker(markersOptions)!!
     }
 
-    private fun createColoredMarkerBitmap(@ColorInt color: Int): Bitmap {
+    private fun createCarMarker(
+        color: Int,
+    ): Marker {
+        val markersOptions = MarkerOptions()
+            .position(LatLng(0.0, 0.0))
+            .draggable(false)
+            .anchor(0.5f, 0.5f)
+            .flat(true)
+            .visible(false)
+            .icon(BitmapDescriptorFactory.fromBitmap(createColoredMarkerBitmap(color, R.drawable.ic_directions_car)))
+        return googleMap.addMarker(markersOptions)!!
+    }
+
+    private fun createColoredMarkerBitmap(@ColorInt color: Int, @DrawableRes drawableRes: Int): Bitmap {
         val opt = BitmapFactory.Options()
         opt.inMutable = true
         val navigationIcon =
             BitmapFactory.decodeResource(
                 activity.resources,
-                R.drawable.ic_navigation_white_48dp,
+                drawableRes,
                 opt
             )
         val p = Paint()
@@ -93,7 +107,7 @@ class MapView(val activity: SmartParkingActivity, private val googleMap: GoogleM
     }
 
     companion object {
-        private val CAMERA_MARKER_COLOR: Int = Color.argb(255, 0, 255, 0)
-        private val EARTH_MARKER_COLOR: Int = Color.argb(255, 125, 125, 125)
+        private val USER_MARKER_COLOR: Int = Color.argb(255, 0, 255, 0)
+        private val CAR_MARKER_COLOR: Int = Color.argb(255, 125, 125, 125)
     }
 }

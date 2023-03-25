@@ -30,22 +30,19 @@ class SmartParkingActivity : AppCompatActivity() {
 
         arCoreSessionHelper = ARCoreSessionLifecycleHelper(this)
 
-        arCoreSessionHelper.exceptionCallback =
-            { exception ->
-                val message =
-                    when (exception) {
-                        is UnavailableUserDeclinedInstallationException ->
-                            "Please install Google Play Services for AR"
+        arCoreSessionHelper.exceptionCallback = { exception ->
+            val message = when (exception) {
+                is UnavailableUserDeclinedInstallationException -> "Please install Google Play Services for AR"
 
-                        is UnavailableApkTooOldException -> "Please update ARCore"
-                        is UnavailableSdkTooOldException -> "Please update this app"
-                        is UnavailableDeviceNotCompatibleException -> "This device does not support AR"
-                        is CameraNotAvailableException -> "Camera not available. Try restarting the app."
-                        else -> "Failed to create AR session: $exception"
-                    }
-                Log.e(TAG, "ARCore threw an exception", exception)
-                view.snackbarHelper.showError(this, message)
+                is UnavailableApkTooOldException -> "Please update ARCore"
+                is UnavailableSdkTooOldException -> "Please update this app"
+                is UnavailableDeviceNotCompatibleException -> "This device does not support AR"
+                is CameraNotAvailableException -> "Camera not available. Try restarting the app."
+                else -> "Failed to create AR session: $exception"
             }
+            Log.e(TAG, "ARCore threw an exception", exception)
+            view.snackbarHelper.showError(this, message)
+        }
 
         arCoreSessionHelper.beforeSessionResume = ::configureSession
 
@@ -80,9 +77,9 @@ class SmartParkingActivity : AppCompatActivity() {
             Toast.makeText(
                 this,
                 "Camera and location permissions are needed to run this application",
-                Toast.LENGTH_LONG,
-            )
-                .show()
+                Toast.LENGTH_LONG
+            ).show()
+
             if (!GeoPermissionsHelper.shouldShowRequestPermissionRationale(this)) {
                 GeoPermissionsHelper.launchPermissionSettings(this)
             }

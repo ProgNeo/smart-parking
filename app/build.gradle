@@ -4,7 +4,7 @@ apply plugin: 'kotlin-android'
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "com.google.ar.core.codelabs.hellogeospatial"
+        applicationId "com.valerine.ar.core.codelabs.smartparking"
 
         // AR Optional apps must declare minSdkVersion >= 14.
         // AR Required apps must declare minSdkVersion >= 24.

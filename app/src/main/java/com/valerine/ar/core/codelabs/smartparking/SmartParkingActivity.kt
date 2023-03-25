@@ -9,7 +9,6 @@ import com.google.ar.core.Session
 import com.valerine.ar.core.codelabs.smartparking.helpers.ARCoreSessionLifecycleHelper
 import com.valerine.ar.core.codelabs.smartparking.helpers.GeoPermissionsHelper
 import com.valerine.ar.core.codelabs.smartparking.helpers.SmartParkingView
-import com.valerine.ar.core.examples.java.common.helpers.FullScreenHelper
 import com.valerine.ar.core.examples.java.common.samplerender.SampleRender
 import com.google.ar.core.exceptions.CameraNotAvailableException
 import com.google.ar.core.exceptions.UnavailableApkTooOldException
@@ -31,22 +30,19 @@ class SmartParkingActivity : AppCompatActivity() {
 
         arCoreSessionHelper = ARCoreSessionLifecycleHelper(this)
 
-        arCoreSessionHelper.exceptionCallback =
-            { exception ->
-                val message =
-                    when (exception) {
-                        is UnavailableUserDeclinedInstallationException ->
-                            "Please install Google Play Services for AR"
+        arCoreSessionHelper.exceptionCallback = { exception ->
+            val message = when (exception) {
+                is UnavailableUserDeclinedInstallationException -> "Please install Google Play Services for AR"
 
-                        is UnavailableApkTooOldException -> "Please update ARCore"
-                        is UnavailableSdkTooOldException -> "Please update this app"
-                        is UnavailableDeviceNotCompatibleException -> "This device does not support AR"
-                        is CameraNotAvailableException -> "Camera not available. Try restarting the app."
-                        else -> "Failed to create AR session: $exception"
-                    }
-                Log.e(TAG, "ARCore threw an exception", exception)
-                view.snackbarHelper.showError(this, message)
+                is UnavailableApkTooOldException -> "Please update ARCore"
+                is UnavailableSdkTooOldException -> "Please update this app"
+                is UnavailableDeviceNotCompatibleException -> "This device does not support AR"
+                is CameraNotAvailableException -> "Camera not available. Try restarting the app."
+                else -> "Failed to create AR session: $exception"
             }
+            Log.e(TAG, "ARCore threw an exception", exception)
+            view.snackbarHelper.showError(this, message)
+        }
 
         arCoreSessionHelper.beforeSessionResume = ::configureSession
 
@@ -63,18 +59,14 @@ class SmartParkingActivity : AppCompatActivity() {
     }
 
     private fun configureSession(session: Session) {
-        session.configure(
-            session.config.apply {
-                focusMode = Config.FocusMode.AUTO
-                geospatialMode = Config.GeospatialMode.ENABLED
-            }
-        )
+        session.configure(session.config.apply {
+            focusMode = Config.FocusMode.AUTO
+            geospatialMode = Config.GeospatialMode.ENABLED
+        })
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        results: IntArray
+        requestCode: Int, permissions: Array<String>, results: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, results)
         if (!GeoPermissionsHelper.hasGeoPermissions(this)) {
@@ -82,8 +74,7 @@ class SmartParkingActivity : AppCompatActivity() {
                 this,
                 "Camera and location permissions are needed to run this application",
                 Toast.LENGTH_LONG
-            )
-                .show()
+            ).show()
             if (!GeoPermissionsHelper.shouldShowRequestPermissionRationale(this)) {
                 GeoPermissionsHelper.launchPermissionSettings(this)
             }

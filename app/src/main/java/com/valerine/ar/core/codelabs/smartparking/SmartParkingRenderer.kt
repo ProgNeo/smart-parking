@@ -1,7 +1,9 @@
 package com.valerine.ar.core.codelabs.smartparking
 
+import android.content.SharedPreferences
 import android.opengl.Matrix
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.maps.model.LatLng
@@ -87,6 +89,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
             backgroundRenderer.setUseDepthVisualization(render, false)
             backgroundRenderer.setUseOcclusion(render, false)
+            loadMark()
         } catch (e: IOException) {
             Log.e(TAG, "Failed to read a required asset file", e)
             showError("Failed to read a required asset file: $e")
@@ -161,7 +164,6 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
                 longitude = cameraGeospatialPose.longitude,
                 heading = cameraGeospatialPose.heading
             )
-            activity.view.updateStatusText(earth, cameraGeospatialPose)
         }
 
         // Draw the placed anchor, if it exists.
@@ -175,6 +177,36 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
     private var earthAnchor: Anchor? = null
 
+    private fun loadMark() {
+        val altitude = activity.view.sharedPreferences.getFloat("altitude", 0f).toDouble()
+        val latitude = activity.view.sharedPreferences.getFloat("latitude", 0f).toDouble()
+        val longitude = activity.view.sharedPreferences.getFloat("longitude", 0f).toDouble()
+        if (longitude != 0.toDouble() && latitude != 0.toDouble() && altitude != 0.toDouble()) {
+            val earth = session?.earth ?: return
+            earthAnchor?.detach()
+
+            val qx = 0f
+            val qy = 0f
+            val qz = 0f
+            val qw = 1f
+
+            val latLng = LatLng(latitude, longitude)
+
+            earthAnchor = earth.createAnchor(latitude, longitude, altitude, qx, qy, qz, qw)
+
+            activity.runOnUiThread(
+                Runnable {
+                    kotlin.run {
+                        activity.view.mapView?.earthMarker?.apply {
+                            position = latLng
+                            isVisible = true
+                        }
+                    }
+                }
+            )
+        }
+    }
+
     fun placeMark() {
         val earth = session?.earth ?: return
         if (earth.trackingState != TrackingState.TRACKING) {
@@ -183,9 +215,16 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         earthAnchor?.detach()
 
         val cameraGeospatialPose = earth.cameraGeospatialPose
-        val altitude = cameraGeospatialPose.altitude + 5
+        val altitude = cameraGeospatialPose.altitude + 3
         val latitude = cameraGeospatialPose.latitude
         val longitude = cameraGeospatialPose.longitude
+
+        with(activity.view.sharedPreferences.edit()) {
+            putFloat("altitude", longitude.toFloat())
+            putFloat("latitude", latitude.toFloat())
+            putFloat("longitude", longitude.toFloat())
+            apply()
+        }
 
         val qx = 0f
         val qy = 0f

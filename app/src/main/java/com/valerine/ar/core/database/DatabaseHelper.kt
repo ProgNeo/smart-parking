@@ -87,8 +87,10 @@ class DatabaseHelper(context: Context) :
         }
 
         db.update(
-            TABLE_NAME_PARKING, values,
-            "$PARKING_COLUMN_ID=${parking.id}", arrayOf("${parking.id}")
+            TABLE_NAME_PARKING,
+            values,
+            "$PARKING_COLUMN_ID=${parking.id}",
+            arrayOf("${parking.id}"),
         )
         db.close()
     }
@@ -122,8 +124,10 @@ class DatabaseHelper(context: Context) :
         }
 
         db.update(
-            TABLE_NAME_PARKING_PLACE, values,
-            "$PARKING_PLACE_COLUMN_ID=${parkingPlace.id}", null
+            TABLE_NAME_PARKING_PLACE,
+            values,
+            "$PARKING_PLACE_COLUMN_ID=${parkingPlace.id}",
+            null,
         )
         db.close()
     }
@@ -140,7 +144,7 @@ class DatabaseHelper(context: Context) :
                     id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
                     name = getString(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
                     latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
-                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
+                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)),
                 )
                 parkingList.add(parking)
             }
@@ -163,7 +167,7 @@ class DatabaseHelper(context: Context) :
                     id = getInt(cursor.getColumnIndexOrThrow(PARKING_COLUMN_ID)),
                     name = getString(cursor.getColumnIndexOrThrow(PARKING_COLUMN_NAME)),
                     latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LATITUDE)),
-                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE))
+                    longitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_COLUMN_LONGITUDE)),
                 )
                 break
             }
@@ -187,16 +191,16 @@ class DatabaseHelper(context: Context) :
                     latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_PLACE_COLUMN_LATITUDE)),
                     longitude = getDouble(
                         cursor.getColumnIndexOrThrow(
-                            PARKING_PLACE_COLUMN_LONGITUDE
-                        )
+                            PARKING_PLACE_COLUMN_LONGITUDE,
+                        ),
                     ),
                     isEmployed = getInt(
                         cursor.getColumnIndexOrThrow(
-                            PARKING_PLACE_COLUMN_IS_EMPLOYED
-                        )
+                            PARKING_PLACE_COLUMN_IS_EMPLOYED,
+                        ),
                     ) > 0,
                     isBooked = getInt(cursor.getColumnIndexOrThrow(PARKING_PLACE_COLUMN_IS_BOOKED)) > 0,
-                    parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_PLACE_PARKING_ID))
+                    parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_PLACE_PARKING_ID)),
                 )
                 parkingPlacesList.add(parkingPlace)
             }
@@ -220,16 +224,16 @@ class DatabaseHelper(context: Context) :
                     latitude = getDouble(cursor.getColumnIndexOrThrow(PARKING_PLACE_COLUMN_LATITUDE)),
                     longitude = getDouble(
                         cursor.getColumnIndexOrThrow(
-                            PARKING_PLACE_COLUMN_LONGITUDE
-                        )
+                            PARKING_PLACE_COLUMN_LONGITUDE,
+                        ),
                     ),
                     isEmployed = getInt(
                         cursor.getColumnIndexOrThrow(
-                            PARKING_PLACE_COLUMN_IS_EMPLOYED
-                        )
+                            PARKING_PLACE_COLUMN_IS_EMPLOYED,
+                        ),
                     ) > 0,
                     isBooked = getInt(cursor.getColumnIndexOrThrow(PARKING_PLACE_COLUMN_IS_BOOKED)) > 0,
-                    parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_PLACE_PARKING_ID))
+                    parkingId = getInt(cursor.getColumnIndexOrThrow(PARKING_PLACE_PARKING_ID)),
                 )
                 break
             }

@@ -10,8 +10,8 @@ import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.valerine.ar.core.codelabs.smartparking.SmartParkingActivity
 import com.valerine.ar.core.codelabs.smartparking.R
+import com.valerine.ar.core.codelabs.smartparking.SmartParkingActivity
 import com.valerine.ar.core.examples.java.common.helpers.SnackbarHelper
 
 class SmartParkingView(val activity: SmartParkingActivity) : DefaultLifecycleObserver {
@@ -62,15 +62,15 @@ class SmartParkingView(val activity: SmartParkingActivity) : DefaultLifecycleObs
                         this.setImageDrawable(
                             ContextCompat.getDrawable(
                                 activity.applicationContext,
-                                R.drawable.ic_my_location
-                            )
+                                R.drawable.ic_my_location,
+                            ),
                         )
                     } else {
                         this.setImageDrawable(
                             ContextCompat.getDrawable(
                                 activity.applicationContext,
-                                R.drawable.ic_location_disabled
-                            )
+                                R.drawable.ic_location_disabled,
+                            ),
                         )
                     }
                 }

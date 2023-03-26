@@ -3,8 +3,6 @@ package com.valerine.ar.core.codelabs.smartparking
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -14,9 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import com.google.ar.core.Config
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.CameraNotAvailableException
@@ -30,7 +25,6 @@ import com.valerine.ar.core.codelabs.smartparking.helpers.SmartParkingView
 import com.valerine.ar.core.database.DatabaseHelper
 import com.valerine.ar.core.database.models.ParkingPlace
 import com.valerine.ar.core.examples.java.common.samplerender.SampleRender
-import java.util.Locale
 
 class SmartParkingActivity : AppCompatActivity(), LocationListener {
     companion object {
@@ -88,12 +82,11 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
     private fun configureSession(session: Session) {
         session.configure(
             session.config.apply {
-                //focusMode = Config.FocusMode.AUTO
+                // focusMode = Config.FocusMode.AUTO
                 geospatialMode = Config.GeospatialMode.ENABLED
             },
         )
     }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -105,7 +98,7 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
             Toast.makeText(
                 this,
                 "Camera and location permissions are needed to run this application",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_LONG,
             ).show()
 
             if (!GeoPermissionsHelper.shouldShowRequestPermissionRationale(this)) {
@@ -118,15 +111,17 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
     fun getLocation() {
         runOnUiThread {
             locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if ((ContextCompat.checkSelfPermission(
+            if ((
+                ContextCompat.checkSelfPermission(
                     this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED)
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                ) != PackageManager.PERMISSION_GRANTED
+                )
             ) {
                 ActivityCompat.requestPermissions(
                     this,
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    2
+                    2,
                 )
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)

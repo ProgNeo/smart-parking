@@ -1,17 +1,15 @@
 package com.valerine.ar.core.codelabs.smartparking.helpers
 
 import android.app.Activity
-import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.google.ar.core.ArCoreApk
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.CameraNotAvailableException
 
-
 class ARCoreSessionLifecycleHelper(
     val activity: Activity,
-    val features: Set<Session.Feature> = setOf()
+    val features: Set<Session.Feature> = setOf(),
 ) : DefaultLifecycleObserver {
     var installRequested = false
     var session: Session? = null

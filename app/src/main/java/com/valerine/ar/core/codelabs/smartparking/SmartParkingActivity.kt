@@ -1,11 +1,22 @@
 package com.valerine.ar.core.codelabs.smartparking
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
-import android.provider.ContactsContract.Data
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 import com.google.ar.core.Config
 import com.google.ar.core.Session
 import com.google.ar.core.exceptions.CameraNotAvailableException
@@ -19,16 +30,20 @@ import com.valerine.ar.core.codelabs.smartparking.helpers.SmartParkingView
 import com.valerine.ar.core.database.DatabaseHelper
 import com.valerine.ar.core.database.models.ParkingPlace
 import com.valerine.ar.core.examples.java.common.samplerender.SampleRender
+import java.util.Locale
 
-class SmartParkingActivity : AppCompatActivity() {
+class SmartParkingActivity : AppCompatActivity(), LocationListener {
     companion object {
         private const val TAG = "SmartParkingActivity"
     }
 
+    private lateinit var locationManager: LocationManager
     lateinit var arCoreSessionHelper: ARCoreSessionLifecycleHelper
     lateinit var view: SmartParkingView
     lateinit var renderer: SmartParkingRenderer
     lateinit var databaseHelper: DatabaseHelper
+
+    var userLatLng: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +95,7 @@ class SmartParkingActivity : AppCompatActivity() {
         )
     }
 
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String>,
@@ -98,5 +114,18 @@ class SmartParkingActivity : AppCompatActivity() {
             }
             finish()
         }
+    }
+    fun getLocation() {
+        runOnUiThread {
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2)
+            }
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
+        }
+    }
+
+    override fun onLocationChanged(location: Location) {
+        userLatLng = LatLng(location.latitude, location.longitude)
     }
 }

@@ -179,12 +179,14 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
         render.clear(virtualSceneFramebuffer, 0f, 0f, 0f, 0f)
 
+        activity.getLocation()
+
         val earth = session.earth
         if (earth?.trackingState == TrackingState.TRACKING) {
             val cameraGeospatialPose = earth.cameraGeospatialPose
             activity.view.mapView?.updateMapPosition(
-                latitude = cameraGeospatialPose.latitude,
-                longitude = cameraGeospatialPose.longitude,
+                latitude = activity.userLatLng?.latitude ?: cameraGeospatialPose.latitude,
+                longitude = activity.userLatLng?.longitude ?: cameraGeospatialPose.longitude,
                 heading = cameraGeospatialPose.heading,
             )
         }
@@ -257,8 +259,8 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
         val cameraGeospatialPose = earth.cameraGeospatialPose
         val altitude = cameraGeospatialPose.altitude + 3
-        val latitude = cameraGeospatialPose.latitude
-        val longitude = cameraGeospatialPose.longitude
+        val latitude = activity.userLatLng?.latitude ?: cameraGeospatialPose.latitude
+        val longitude = activity.userLatLng?.longitude ?: cameraGeospatialPose.longitude
 
         with(activity.view.sharedPreferences.edit()) {
             putFloat("altitude", altitude.toFloat())

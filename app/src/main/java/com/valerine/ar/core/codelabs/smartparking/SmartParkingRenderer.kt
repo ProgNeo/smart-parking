@@ -70,7 +70,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             virtualObjectTextureRed =
                 Texture.createFromAsset(
                     render,
-                    "models/pointer.png",
+                    "models/red_pointer.png",
                     Texture.WrapMode.CLAMP_TO_EDGE,
                     Texture.ColorFormat.SRGB,
                 )
@@ -78,7 +78,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             virtualObjectTextureBlue =
                 Texture.createFromAsset(
                     render,
-                    "models/pointer.png",
+                    "models/blue_pointer.png",
                     Texture.WrapMode.CLAMP_TO_EDGE,
                     Texture.ColorFormat.SRGB,
                 )
@@ -113,6 +113,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             backgroundRenderer.setUseOcclusion(render, false)
             loadMark()
             loadParkingMarks()
+            activity.arCoreSessionHelper.updateSession()
         } catch (e: IOException) {
             Log.e(TAG, "Failed to read a required asset file", e)
             showError("Failed to read a required asset file: $e")
@@ -185,8 +186,8 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
         if (earth?.trackingState == TrackingState.TRACKING) {
             val cameraGeospatialPose = earth.cameraGeospatialPose
             activity.view.mapView?.updateMapPosition(
-                latitude = activity.userLatLng?.latitude ?: cameraGeospatialPose.latitude,
-                longitude = activity.userLatLng?.longitude ?: cameraGeospatialPose.longitude,
+                latitude = cameraGeospatialPose.latitude,
+                longitude = cameraGeospatialPose.longitude,
                 heading = cameraGeospatialPose.heading,
             )
         }
@@ -196,7 +197,7 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
             render.renderCompassAtAnchorRed(it)
         }
         parkingAnchor?.let {
-            render.renderCompassAtAnchorRed(it)
+            render.renderCompassAtAnchorBlue(it)
         }
 
         // Compose the virtual scene with the background.
@@ -259,8 +260,8 @@ class SmartParkingRenderer(val activity: SmartParkingActivity) :
 
         val cameraGeospatialPose = earth.cameraGeospatialPose
         val altitude = cameraGeospatialPose.altitude + 3
-        val latitude = activity.userLatLng?.latitude ?: cameraGeospatialPose.latitude
-        val longitude = activity.userLatLng?.longitude ?: cameraGeospatialPose.longitude
+        val latitude = cameraGeospatialPose.latitude
+        val longitude = cameraGeospatialPose.longitude
 
         with(activity.view.sharedPreferences.edit()) {
             putFloat("altitude", altitude.toFloat())

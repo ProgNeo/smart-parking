@@ -43,7 +43,7 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
     lateinit var renderer: SmartParkingRenderer
     lateinit var databaseHelper: DatabaseHelper
 
-    var userLatLng: LatLng? = null
+    var userLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +61,6 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
         arCoreSessionHelper.exceptionCallback = { exception ->
             val message = when (exception) {
                 is UnavailableUserDeclinedInstallationException -> "Please install Google Play Services for AR"
-
                 is UnavailableApkTooOldException -> "Please update ARCore"
                 is UnavailableSdkTooOldException -> "Please update this app"
                 is UnavailableDeviceNotCompatibleException -> "This device does not support AR"
@@ -89,7 +88,7 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
     private fun configureSession(session: Session) {
         session.configure(
             session.config.apply {
-                focusMode = Config.FocusMode.AUTO
+                //focusMode = Config.FocusMode.AUTO
                 geospatialMode = Config.GeospatialMode.ENABLED
             },
         )
@@ -115,17 +114,26 @@ class SmartParkingActivity : AppCompatActivity(), LocationListener {
             finish()
         }
     }
+
     fun getLocation() {
         runOnUiThread {
             locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-            if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2)
+            if ((ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED)
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    2
+                )
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this)
         }
     }
 
     override fun onLocationChanged(location: Location) {
-        userLatLng = LatLng(location.latitude, location.longitude)
+        userLocation = location
     }
 }
